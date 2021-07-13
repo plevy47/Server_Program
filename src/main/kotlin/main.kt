@@ -8,14 +8,14 @@ fun main() {
 
 
 
-    val MTL = HockeyTeams("Canadiens","Bell Centre")
-    val VAN = HockeyTeams("green","Rogers Arena")
-    val TOR = HockeyTeams("blue","Scotiabank Arena")
+    val t1 = HockeyTeams("Canadiens","Bell Centre")
+    val t2 = HockeyTeams("Canucks","Rogers Arena")
+    val t3 = HockeyTeams("Maple Leafs","Scotiabank Arena")
 
 
-    mainVerticle.colourList.add(MTL)
-    mainVerticle.colourList.add(VAN)
-    mainVerticle.colourList.add(TOR)
+    mainVerticle.teamList.add(t1)
+    mainVerticle.teamList.add(t2)
+    mainVerticle.teamList.add(t3)
 
 
     val vertx: Vertx = Vertx.vertx()

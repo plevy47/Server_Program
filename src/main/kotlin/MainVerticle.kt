@@ -5,7 +5,7 @@ import data.HockeyTeams
 
 class MainVerticle : AbstractVerticle() {
 
-    var colourList = mutableListOf<HockeyTeams>()
+    var teamList = mutableListOf<HockeyTeams>()
 
     private val defaultMessage = "Endpoint not found. Try again from our list of endpoints. \n/create \n/read \n/update \n/delete"
 
@@ -28,32 +28,32 @@ class MainVerticle : AbstractVerticle() {
     private fun displayDefault(routingContext: RoutingContext){
         routingContext.response().end(defaultMessage)
     }
-    private fun createData(routingContext: RoutingContext, newName: String, newRink: String) {
-        val data = HockeyTeams(newName,newRink)
-        colourList.add(data)
-        routingContext.response().end(colourList.toString())
+    private fun createData(routingContext: RoutingContext, name: String, city: String) {
+        val t4 = HockeyTeams(name,city)
+        teamList.add(t4)
+        routingContext.response().end(teamList.toString())
     }
     private fun readData(routingContext: RoutingContext) {
-        routingContext.response().end(colourList.toString())
+        routingContext.response().end(teamList.toString())
     }
     private fun updateData(routingContext: RoutingContext) {
         routingContext.response().end("/update")
     }
     private fun deleteAllData(routingContext: RoutingContext,) {
-        colourList.clear()
+        teamList.clear()
         routingContext.response().end("All data cleared")
     }
     private fun readSingleData(routingContext: RoutingContext){
         val parameters = routingContext.request().params()
         val name = parameters.get("name")
-        val rink = parameters.get("rink")
-        println("$name , $rink")
-        //val data = HockeyTeams(response)
+        val city = parameters.get("city")
 
-       // if (colourList.contains(element =  )){
+        teamList.find{it == HockeyTeams(name,city)}
+        //println("$name , $city")
+        routingContext.response().end(teamList.toString())
 
         }
 
-        //routingContext.response().end(colourList.toString())
+
 
     }

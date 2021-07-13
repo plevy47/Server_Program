@@ -1,14 +1,12 @@
 package data
 
-class HockeyTeams(name: String, homeRink: String) {
-    val name: String = homeRink
-    //override fun toString(): String {
-    //    return name
-    val homeRink: String = homeRink
-    //override fun toString(): String {
-    //    return homeRink
+class HockeyTeams(name: String, homeCity: String) {
+    val name: String = name
+    val homeRink: String = homeCity
+    override fun toString(): String {
+       return "$name , $homeRink"
     }
-//}
+}
 
 
 
