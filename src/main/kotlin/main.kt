@@ -1,4 +1,4 @@
-import data.HockeyTeams
+import data.HockeyTeam
 import io.vertx.core.Vertx
 
 
@@ -8,9 +8,11 @@ fun main() {
 
 
 
-    val t1 = HockeyTeams("Canadiens","Montreal")
-    val t2 = HockeyTeams("Canucks","Vancouver")
-    val t3 = HockeyTeams("Maple Leafs","Toronto")
+    val t1 = HockeyTeam("Canadiens",
+        "Montreal")
+//
+    val t2 = HockeyTeam("Canucks","Vancouver")
+    val t3 = HockeyTeam("Maple Leafs","Toronto")
 
 
     mainVerticle.teamList.add(t1)
