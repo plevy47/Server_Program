@@ -7,7 +7,8 @@ class MainVerticle : AbstractVerticle() {
 
     var teamList = mutableListOf<HockeyTeams>()
 
-    private val defaultMessage = "Endpoint not found. Try again from our list of endpoints. \n/create \n/read \n/update \n/delete"
+    private val defaultMessage =
+        "Endpoint not found. Try again from our list of endpoints. \n/create \n/read \n/update \n/delete"
 
     override fun start() {
         val router = Router.router(vertx)
@@ -17,43 +18,59 @@ class MainVerticle : AbstractVerticle() {
             .onSuccess { server ->
                 println("HTTP server started on port " + server.actualPort())
             }
-        router.route("/create").handler { createData(it, "Lightning","Amalie Arena") }
+        router.route("/create").handler { createData(it, "Lightning", "Tampa Bay") }
         router.route("/read").handler { readData(it) }
         router.route("/update").handler { updateData(it) }
         router.route("/delete").handler { deleteAllData(it) }
-        router.route("/read/search").handler{readSingleData(it)}
+        router.route("/read/search").handler { readSingleData(it) }
         router.route().handler { displayDefault(it) }
     }
 
-    private fun displayDefault(routingContext: RoutingContext){
+    private fun displayDefault(routingContext: RoutingContext) {
         routingContext.response().end(defaultMessage)
     }
+
     private fun createData(routingContext: RoutingContext, name: String, city: String) {
-        val t4 = HockeyTeams(name,city)
+        val t4 = HockeyTeams(name, city)
         teamList.add(t4)
         routingContext.response().end(teamList.toString())
     }
+
     private fun readData(routingContext: RoutingContext) {
         routingContext.response().end(teamList.toString())
     }
+
     private fun updateData(routingContext: RoutingContext) {
         routingContext.response().end("/update")
     }
-    private fun deleteAllData(routingContext: RoutingContext,) {
+
+    private fun deleteAllData(routingContext: RoutingContext) {
         teamList.clear()
         routingContext.response().end("All data cleared")
     }
-    private fun readSingleData(routingContext: RoutingContext){
+
+    private fun readSingleData(routingContext: RoutingContext) {
         val parameters = routingContext.request().params()
         val name = parameters.get("name")
         val city = parameters.get("city")
-
-        teamList.find{it == HockeyTeams(name,city)}
-        //println("$name , $city")
-        routingContext.response().end(teamList.toString())
-
+        val t5 = HockeyTeams(name, city)
+        if (isInHockeyTeams(t5)) {
+            routingContext.response().end(t5.toString())
+        } else {
+            routingContext.response().setStatusCode(404).end("Data Not Found")
         }
 
 
-
     }
+
+    fun isInHockeyTeams(requestedTeam: HockeyTeams): Boolean {
+        for (team in teamList)
+            if (team.name == requestedTeam.name &&
+                team.homeCity == requestedTeam.homeCity)
+                {
+                return true
+            }
+        return false
+    }
+}
+

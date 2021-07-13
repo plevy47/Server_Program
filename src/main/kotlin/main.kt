@@ -8,9 +8,9 @@ fun main() {
 
 
 
-    val t1 = HockeyTeams("Canadiens","Bell Centre")
-    val t2 = HockeyTeams("Canucks","Rogers Arena")
-    val t3 = HockeyTeams("Maple Leafs","Scotiabank Arena")
+    val t1 = HockeyTeams("Canadiens","Montreal")
+    val t2 = HockeyTeams("Canucks","Vancouver")
+    val t3 = HockeyTeams("Maple Leafs","Toronto")
 
 
     mainVerticle.teamList.add(t1)
