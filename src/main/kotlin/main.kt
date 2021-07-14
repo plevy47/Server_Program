@@ -6,14 +6,21 @@ fun main() {
 
     val mainVerticle = MainVerticle()
 
-
-
     val t1 = HockeyTeam("Canadiens",
-        "Montreal")
-//
-    val t2 = HockeyTeam("Canucks","Vancouver")
-    val t3 = HockeyTeam("Maple Leafs","Toronto")
-
+        "Montreal",
+        24,
+        true,
+        listOf("Blue","White","Red"))
+    val t2 = HockeyTeam("Canucks",
+        "Vancouver",
+        0,
+        false,
+        listOf("Blue","Green","White"))
+    val t3 = HockeyTeam("Maple Leafs",
+        "Toronto",
+        13,
+        true,
+        listOf("Blue","White"))
 
     mainVerticle.teamList.add(t1)
     mainVerticle.teamList.add(t2)

@@ -2,6 +2,7 @@ import io.vertx.core.AbstractVerticle
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.RoutingContext
 import data.HockeyTeam
+import io.vertx.core.MultiMap
 
 class MainVerticle : AbstractVerticle() {
 
@@ -35,22 +36,18 @@ class MainVerticle : AbstractVerticle() {
     }
 
     private fun createData(routingContext: RoutingContext) {
-        val parameters = routingContext.request().params()
-        val name = parameters.get("name")
-        val city = parameters.get("city")
-        val t = HockeyTeam(name, city)
+        val params = routingContext.request().params()
+        val t = getParams(params)
         teamList.add(t)
         routingContext.response().end("new list is:\n$teamList")
     }
 
     private fun readData(routingContext: RoutingContext) {
-        val parameters = routingContext.request().params()
-        val name = parameters.get("name")
-        val city = parameters.get("city")
-        if (name == null || city == null) {
+        val params = routingContext.request().params()
+        val t = getParams(params)
+        if (params == null) { //this needs to be fixed
             routingContext.response().end(teamList.toString())
         } else {
-            val t = HockeyTeam(name, city)
             if (isInHockeyTeams(t)) {
                 routingContext.response().end(t.toString())
             } else {
@@ -60,13 +57,14 @@ class MainVerticle : AbstractVerticle() {
     }
 
     private fun updateData(routingContext: RoutingContext) {
-        val parameters = routingContext.request().params()
-        val oldName = parameters.get("oldName")
-        val oldCity = parameters.get("oldCity")
-        val name = parameters.get("name")
-        val city = parameters.get("city")
-        val o = HockeyTeam(oldName, oldCity)
-        val n = HockeyTeam(name, city)
+        val params = routingContext.request().params()
+        val oldName = params.get("oldName")
+        val oldCity = params.get("oldCity")
+        val oldCupWins = params.get("oldCupWins").toInt()
+        val oldIsOriginalSix = params.get("oldIsOriginalSix").toBoolean()
+        val oldTeamColours = params.get("oldTeamColours").split(",")
+        val o = HockeyTeam(oldName, oldCity, oldCupWins, oldIsOriginalSix, oldTeamColours)
+        val n = getParams(params)
         if (isInHockeyTeams(o)) {
             val foundTeam: HockeyTeam? = teamList.find { it.name == oldName }
             teamList.remove(foundTeam)
@@ -78,14 +76,12 @@ class MainVerticle : AbstractVerticle() {
     }
 
     private fun deleteData(routingContext: RoutingContext) {
-        val parameters = routingContext.request().params()
-        val name = parameters.get("name")
-        val city = parameters.get("city")
-        if (name == null || city == null) {
+        val params = routingContext.request().params()
+        if (params == null) {
             teamList.clear()
             routingContext.response().end("All data cleared")
         } else {
-            val t = HockeyTeam(name, city)
+            val t = getParams(params)
             if (isInHockeyTeams(t)) {
                 val foundTeam: HockeyTeam? = teamList.find { it.name == t.name && it.homeCity == t.homeCity }
                 teamList.remove(foundTeam)
@@ -102,6 +98,16 @@ class MainVerticle : AbstractVerticle() {
                 return true
             }
         return false
+    }
+
+    private fun getParams(params: MultiMap): HockeyTeam {
+        val name = params.get("name")
+        val city = params.get("city")
+        val cupWins = params.get("cupWins").toInt()
+        val isOriginalSix = params.get("isOriginalSix").toBoolean()
+        val teamColours = params.get("teamColours").split(",")
+
+        return HockeyTeam(name, city, cupWins, isOriginalSix, teamColours)
     }
 }
 
