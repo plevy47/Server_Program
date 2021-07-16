@@ -6,6 +6,24 @@ import io.vertx.core.MultiMap
 
 class MainVerticle : AbstractVerticle() {
 
+    private val defaultName = "none"
+    private val defaultCity = "none"
+    private val defaultCupWins = "0"
+    private val defaultIsOriginalSix = "false"
+    private val defaultTeamColours = "none"
+    private val newDefaultName = "none"
+    private val newDefaultCity = "none"
+    private val newDefaultCupWins = "0"
+    private val newDefaultIsOriginalSix = "false"
+    private val newDefaultTeamColours = "none"
+
+    enum class AllPaths(val path: String) {
+        Create("/create"),
+        Read("/read"),
+        Update("/update"),
+        Delete("/delete")
+    }
+
     var teamList = mutableListOf<HockeyTeam>()
 
     private val defaultMessage =
@@ -24,10 +42,10 @@ class MainVerticle : AbstractVerticle() {
                 println("HTTP server started on port " + server.actualPort())
             }
 
-        router.route("/create").handler { createData(it) }
-        router.route("/read").handler { readData(it) }
-        router.route("/update").handler { updateData(it) }
-        router.route("/delete").handler { deleteData(it) }
+        router.post(AllPaths.Create.path).handler { createData(it) }
+        router.get(AllPaths.Read.path).handler { readData(it) }
+        router.put(AllPaths.Update.path).handler { updateData(it) }
+        router.delete(AllPaths.Delete.path).handler { deleteData(it) }
         router.route().handler { displayDefault(it) }
     }
 
@@ -45,7 +63,7 @@ class MainVerticle : AbstractVerticle() {
     private fun readData(routingContext: RoutingContext) {
         val params = routingContext.request().params()
         val t = getParams(params)
-        if (t.name == "all") {
+        if (t.name == defaultName) {
             routingContext.response().end(teamList.toString())
         } else {
             for (team in teamList) {
@@ -59,15 +77,10 @@ class MainVerticle : AbstractVerticle() {
 
     private fun updateData(routingContext: RoutingContext) {
         val params = routingContext.request().params()
-        val newName = params.get("newName")
-        val newCity = params.get("newCity")
-        val newCupWins = params.get("newCupWins").toInt()
-        val newIsOriginalSix = params.get("newIsOriginalSix").toBoolean()
-        val newTeamColours = params.get("newTeamColours").split(",")
-        val n = HockeyTeam(newName, newCity, newCupWins, newIsOriginalSix, newTeamColours)
+        val n = getNewParams(params)
         val o = getParams(params)
-        if (isInHockeyTeams(o)) {
-            val foundTeam: HockeyTeam? = teamList.find { it.name == newName }
+        if (isInHockeyTeams(o.name)) {
+            val foundTeam: HockeyTeam? = teamList.find { it.name == o.name }
             teamList.remove(foundTeam)
             teamList.add(n)
             routingContext.response().end(teamList.toString())
@@ -79,15 +92,15 @@ class MainVerticle : AbstractVerticle() {
     private fun deleteData(routingContext: RoutingContext) {
         val params = routingContext.request().params()
         val t = getParams(params)
-        if (t.name == "all") {
+        if (t.name == defaultName) {
             teamList.clear()
             routingContext.response().end("All data cleared")
         } else {
             for (team in teamList) {
                 if (team.name == t.name) {
-                    val foundTeam: HockeyTeam? = teamList.find { it.name == t.name && it.homeCity == t.homeCity }
+                    val foundTeam: HockeyTeam? = teamList.find { it.name == t.name }
                     teamList.remove(foundTeam)
-                    routingContext.response().end("Deleted: $t")
+                    routingContext.response().end("Deleted: $foundTeam")
                 }
             }
             routingContext.response().setStatusCode(404).end("Data Not Found")
@@ -95,38 +108,36 @@ class MainVerticle : AbstractVerticle() {
 
     }
 
-    private fun isInHockeyTeams(requestedTeam: HockeyTeam): Boolean {
+    private fun isInHockeyTeams(requestedTeamName: String): Boolean {
         for (team in teamList)
-            if (team.name == requestedTeam.name) {
+            if (team.name == requestedTeamName) {
                 return true
             }
         return false
     }
 
+    private fun getNewParams(params: MultiMap): HockeyTeam {
+        val newName = assignDefaultIfNull(params.get("newName"),newDefaultName)
+        val newCity = assignDefaultIfNull(params.get("newCity"),newDefaultCity)
+        val newCupWins = assignDefaultIfNull(params.get("newCupWins"),newDefaultCupWins)
+        val newIsOriginalSix = assignDefaultIfNull(params.get("newIsOriginalSix"),newDefaultIsOriginalSix)
+        val newTeamColours = assignDefaultIfNull(params.get("newTeamColours"),newDefaultTeamColours)
+
+        return HockeyTeam(newName, newCity, newCupWins.toInt(), newIsOriginalSix.toBoolean(), newTeamColours.split(","))
+    }
+
 
     private fun getParams(params: MultiMap): HockeyTeam {
-        var name = params.get("name")
-        var city = params.get("city")
-        var cupWins = params.get("cupWins")
-        var isOriginalSix = params.get("isOriginalSix")
-        var teamColours = params.get("teamColours")
-        if (name == null) {
-            name = "all"
-        }
-        if (city == null) {
-            city = "none"
-        }
-        if (cupWins == null) {
-            cupWins = "0"
-        }
-        if (isOriginalSix == null) {
-            isOriginalSix = "false"
-        }
-        if (teamColours == null) {
-            teamColours = "none"
-        }
+        val name = assignDefaultIfNull(params.get("name"), defaultName)
+        val city = assignDefaultIfNull(params.get("city"),defaultCity)
+        val cupWins = assignDefaultIfNull(params.get("cupWins"),defaultCupWins)
+        val isOriginalSix = assignDefaultIfNull(params.get("isOriginalSix"),defaultIsOriginalSix)
+        val teamColours = assignDefaultIfNull(params.get("teamColours"),defaultTeamColours)
 
         return HockeyTeam(name, city, cupWins.toInt(), isOriginalSix.toBoolean(), teamColours.split(","))
     }
-}
 
+    private fun assignDefaultIfNull(parameter: String?, default: String): String {
+        return parameter ?: default
+    }
+}
