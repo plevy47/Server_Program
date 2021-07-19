@@ -1,4 +1,4 @@
-import data.HockeyTeam
+import data.CustomerInfo
 import io.vertx.core.Vertx
 
 
@@ -6,26 +6,19 @@ fun main() {
 
     val mainVerticle = MainVerticle()
 
-    val t1 = HockeyTeam("Canadiens",
-        "Montreal",
-        24,
-        true,
-        listOf("Blue","White","Red"))
-    val t2 = HockeyTeam("Canucks",
-        "Vancouver",
-        0,
-        false,
-        listOf("Blue","Green","White"))
-    val t3 = HockeyTeam("Maple Leafs",
-        "Toronto",
-        13,
-        true,
-        listOf("Blue","White"))
+    val t1 = CustomerInfo(1,
+        "John",
+        "Smith",
+        34,
+        "johnsmith@gmail.com")
+    val t2 = CustomerInfo(2,
+        "Jane",
+        "Smith",
+        33,
+        "janesmith@gmail.com")
 
-    mainVerticle.teamList.add(t1)
-    mainVerticle.teamList.add(t2)
-    mainVerticle.teamList.add(t3)
-
+    mainVerticle.customerList.add(t1)
+    mainVerticle.customerList.add(t2)
 
     val vertx: Vertx = Vertx.vertx()
     vertx.deployVerticle(mainVerticle)

@@ -1,21 +1,20 @@
 import io.vertx.core.AbstractVerticle
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.RoutingContext
-import data.HockeyTeam
+import data.CustomerInfo
 import io.vertx.core.MultiMap
 
 class MainVerticle : AbstractVerticle() {
 
-    private val defaultName = "none"
-    private val defaultCity = "none"
-    private val defaultCupWins = "0"
-    private val defaultIsOriginalSix = "false"
-    private val defaultTeamColours = "none"
-    private val newDefaultName = "none"
-    private val newDefaultCity = "none"
-    private val newDefaultCupWins = "0"
-    private val newDefaultIsOriginalSix = "false"
-    private val newDefaultTeamColours = "none"
+    private val defaultID = "0"
+    private val defaultFirstName = "none"
+    private val defaultLastName = "none"
+    private val defaultAge = "0"
+    private val defaultEmail = "none"
+    private val newDefaultFirstName = "none"
+    private val newDefaultLastName = "none"
+    private val newDefaultAge = "0"
+    private val newDefaultEmail = "none"
 
     enum class AllPaths(val path: String) {
         Create("/create"),
@@ -24,7 +23,7 @@ class MainVerticle : AbstractVerticle() {
         Delete("/delete")
     }
 
-    var teamList = mutableListOf<HockeyTeam>()
+    var customerList = mutableListOf<CustomerInfo>()
 
     private val defaultMessage =
         "Endpoint not found. Try again from our list of endpoints. " +
@@ -55,20 +54,20 @@ class MainVerticle : AbstractVerticle() {
 
     private fun createData(routingContext: RoutingContext) {
         val params = routingContext.request().params()
-        val t = getParams(params)
-        teamList.add(t)
-        routingContext.response().end("new list is:\n$teamList")
+        val c = getParams(params)
+        customerList.add(c)
+        routingContext.response().end("new list is:\n$customerList")
     }
 
     private fun readData(routingContext: RoutingContext) {
         val params = routingContext.request().params()
-        val t = getParams(params)
-        if (t.name == defaultName) {
-            routingContext.response().end(teamList.toString())
+        val c = getParams(params)
+        if (c.id == defaultID.toInt()) {
+            routingContext.response().end(customerList.toString())
         } else {
-            for (team in teamList) {
-                if (team.name == t.name) {
-                    routingContext.response().end(team.toString())
+            for (customer in customerList) {
+                if (customer.id == c.id) {
+                    routingContext.response().end(customer.toString())
                 }
             }
             routingContext.response().setStatusCode(404).end("Data Not Found")
@@ -77,13 +76,13 @@ class MainVerticle : AbstractVerticle() {
 
     private fun updateData(routingContext: RoutingContext) {
         val params = routingContext.request().params()
-        val n = getNewParams(params)
-        val o = getParams(params)
-        if (isInHockeyTeams(o.name)) {
-            val foundTeam: HockeyTeam? = teamList.find { it.name == o.name }
-            teamList.remove(foundTeam)
-            teamList.add(n)
-            routingContext.response().end(teamList.toString())
+        val nc = getNewParams(params)
+        val oc = getParams(params)
+        if (isInCustomerList(oc.id)) {
+            val foundTeam: CustomerInfo? = customerList.find { it.id == oc.id }
+            customerList.remove(foundTeam)
+            customerList.add(nc)
+            routingContext.response().end(customerList.toString())
         } else {
             routingContext.response().setStatusCode(404).end("Data Not Found")
         }
@@ -92,15 +91,15 @@ class MainVerticle : AbstractVerticle() {
     private fun deleteData(routingContext: RoutingContext) {
         val params = routingContext.request().params()
         val t = getParams(params)
-        if (t.name == defaultName) {
-            teamList.clear()
+        if (t.id == defaultID.toInt()) {
+            customerList.clear()
             routingContext.response().end("All data cleared")
         } else {
-            for (team in teamList) {
-                if (team.name == t.name) {
-                    val foundTeam: HockeyTeam? = teamList.find { it.name == t.name }
-                    teamList.remove(foundTeam)
-                    routingContext.response().end("Deleted: $foundTeam")
+            for (team in customerList) {
+                if (team.id == t.id) {
+                    val foundCustomer: CustomerInfo? = customerList.find { it.id == t.id }
+                    customerList.remove(foundCustomer)
+                    routingContext.response().end("Deleted: $foundCustomer")
                 }
             }
             routingContext.response().setStatusCode(404).end("Data Not Found")
@@ -108,34 +107,34 @@ class MainVerticle : AbstractVerticle() {
 
     }
 
-    private fun isInHockeyTeams(requestedTeamName: String): Boolean {
-        for (team in teamList)
-            if (team.name == requestedTeamName) {
+    private fun isInCustomerList(requestedCustomerID: Int): Boolean {
+        for (customer in customerList)
+            if (customer.id == requestedCustomerID) {
                 return true
             }
         return false
     }
 
-    private fun getNewParams(params: MultiMap): HockeyTeam {
-        val newName = assignDefaultIfNull(params.get("newName"),newDefaultName)
-        val newCity = assignDefaultIfNull(params.get("newCity"),newDefaultCity)
-        val newCupWins = assignDefaultIfNull(params.get("newCupWins"),newDefaultCupWins)
-        val newIsOriginalSix = assignDefaultIfNull(params.get("newIsOriginalSix"),newDefaultIsOriginalSix)
-        val newTeamColours = assignDefaultIfNull(params.get("newTeamColours"),newDefaultTeamColours)
+    private fun getParams(params: MultiMap): CustomerInfo {
+        val id = assignDefaultIfNull(params.get("id"), defaultID)
+        val firstName = assignDefaultIfNull(params.get("firstName"), defaultFirstName)
+        val lastName = assignDefaultIfNull(params.get("lastName"), defaultLastName)
+        val age = assignDefaultIfNull(params.get("age"), defaultAge)
+        val email = assignDefaultIfNull(params.get("email"), defaultEmail)
 
-        return HockeyTeam(newName, newCity, newCupWins.toInt(), newIsOriginalSix.toBoolean(), newTeamColours.split(","))
+        return CustomerInfo(id.toInt(), firstName, lastName, age.toInt(), email)
     }
 
+    private fun getNewParams(params: MultiMap): CustomerInfo {
+        val newId = assignDefaultIfNull(params.get("id"), defaultID)
+        val newFirstName = assignDefaultIfNull(params.get("newFirstName"), newDefaultFirstName)
+        val newLastName = assignDefaultIfNull(params.get("newLastName"), newDefaultLastName)
+        val newAge = assignDefaultIfNull(params.get("newAge"), newDefaultAge)
+        val newEmail = assignDefaultIfNull(params.get("newEmail"), newDefaultEmail)
 
-    private fun getParams(params: MultiMap): HockeyTeam {
-        val name = assignDefaultIfNull(params.get("name"), defaultName)
-        val city = assignDefaultIfNull(params.get("city"),defaultCity)
-        val cupWins = assignDefaultIfNull(params.get("cupWins"),defaultCupWins)
-        val isOriginalSix = assignDefaultIfNull(params.get("isOriginalSix"),defaultIsOriginalSix)
-        val teamColours = assignDefaultIfNull(params.get("teamColours"),defaultTeamColours)
-
-        return HockeyTeam(name, city, cupWins.toInt(), isOriginalSix.toBoolean(), teamColours.split(","))
+        return CustomerInfo(newId.toInt(), newFirstName, newLastName, newAge.toInt(), newEmail)
     }
+
 
     private fun assignDefaultIfNull(parameter: String?, default: String): String {
         return parameter ?: default
