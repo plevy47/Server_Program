@@ -1,0 +1,12 @@
+ebean:
+  dbSchema: public
+  migration:
+    run: true
+
+datasource:
+  db:
+    username: postgres
+    password: postgres
+    url: jdbc:postgresql://localhost:4200/test
+    driver: org.postgresql.Driver
+

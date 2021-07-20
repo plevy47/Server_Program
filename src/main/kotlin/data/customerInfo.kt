@@ -10,6 +10,3 @@ class CustomerInfo(val id: Int,
        return "$id,\n $firstName,\n $lastName,\n $age,\n $email,\n\n "
     }
 }
-
-
-

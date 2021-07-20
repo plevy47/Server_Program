@@ -1,28 +1,23 @@
-import data.CustomerInfo
+import data.CustomerInformation
 import io.vertx.core.Vertx
 
 
 fun main() {
 
     val mainVerticle = MainVerticle()
-
-    val t1 = CustomerInfo(1,
+    val c1 = CustomerInformation(
         "John",
         "Smith",
-        34,
-        "johnsmith@gmail.com")
-    val t2 = CustomerInfo(2,
-        "Jane",
-        "Smith",
-        33,
-        "janesmith@gmail.com")
+        40,
+        "jonhsmith@gmail.com")
 
-    mainVerticle.customerList.add(t1)
-    mainVerticle.customerList.add(t2)
+    println(c1)
 
     val vertx: Vertx = Vertx.vertx()
     vertx.deployVerticle(mainVerticle)
 }
+
+
 /* how do i define what data
  to create/remove/replace with only the path */
 
