@@ -1,7 +1,10 @@
 ebean:
+  test:
+    platform: postgres
   dbSchema: public
   migration:
     run: true
+
 
 datasource:
   db:

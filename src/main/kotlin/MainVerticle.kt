@@ -1,7 +1,7 @@
 import io.vertx.core.AbstractVerticle
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.RoutingContext
-import data.CustomerInfo
+import entities.CustomerInfo
 import io.vertx.core.MultiMap
 
 class MainVerticle : AbstractVerticle() {
@@ -62,6 +62,7 @@ class MainVerticle : AbstractVerticle() {
     private fun readData(routingContext: RoutingContext) {
         val params = routingContext.request().params()
         val c = getParams(params)
+
         if (c.id == defaultID.toInt()) {
             routingContext.response().end(customerList.toString())
         } else {
@@ -122,7 +123,7 @@ class MainVerticle : AbstractVerticle() {
         val age = assignDefaultIfNull(params.get("age"), defaultAge)
         val email = assignDefaultIfNull(params.get("email"), defaultEmail)
 
-        return CustomerInfo(id.toInt(), firstName, lastName, age.toInt(), email)
+        return CustomerInfo()
     }
 
     private fun getNewParams(params: MultiMap): CustomerInfo {
@@ -132,7 +133,7 @@ class MainVerticle : AbstractVerticle() {
         val newAge = assignDefaultIfNull(params.get("newAge"), newDefaultAge)
         val newEmail = assignDefaultIfNull(params.get("newEmail"), newDefaultEmail)
 
-        return CustomerInfo(newId.toInt(), newFirstName, newLastName, newAge.toInt(), newEmail)
+        return CustomerInfo()
     }
 
 
