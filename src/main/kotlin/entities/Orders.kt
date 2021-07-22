@@ -1,5 +1,6 @@
 package entities
 
+import io.ebean.Model
 import io.ebean.annotation.Length
 import java.util.*
 import javax.persistence.Entity
@@ -8,7 +9,7 @@ import javax.persistence.Table
 
 @Entity
 @Table
-class Orders() : BaseModel() {
+class Orders() : Model() {
 
     @Length(30)
     var productId: Int = 0
@@ -17,7 +18,7 @@ class Orders() : BaseModel() {
     var productName: String = "default"
 
     @Length(2)
-    var orderDate: Date? = null //01/01/1999
+    var orderDate: Date? = null
 
     @Length(50)
     var orderPrice: Long = 0

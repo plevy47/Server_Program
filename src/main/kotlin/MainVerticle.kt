@@ -3,6 +3,7 @@ import io.vertx.ext.web.Router
 import io.vertx.ext.web.RoutingContext
 import entities.CustomerInfo
 import io.vertx.core.MultiMap
+import java.lang.NumberFormatException
 
 class MainVerticle : AbstractVerticle() {
 
@@ -15,6 +16,7 @@ class MainVerticle : AbstractVerticle() {
     private val newDefaultLastName = "none"
     private val newDefaultAge = "0"
     private val newDefaultEmail = "none"
+    val data = DatabaseFunctions()
 
     enum class AllPaths(val path: String) {
         Create("/create"),
@@ -61,29 +63,30 @@ class MainVerticle : AbstractVerticle() {
 
     private fun readData(routingContext: RoutingContext) {
         val params = routingContext.request().params()
-        val c = getParams(params)
-
-        if (c.id == defaultID.toInt()) {
-            routingContext.response().end(customerList.toString())
-        } else {
-            for (customer in customerList) {
-                if (customer.id == c.id) {
-                    routingContext.response().end(customer.toString())
-                }
-            }
-            routingContext.response().setStatusCode(404).end("Data Not Found")
+        val searchKey = getParam(params, "searchKey")
+        if (searchKey == null) {
+            routingContext.response().end(data.listAllCustomers())
+        }
+        val searchQuery = getParam(params, searchKey!!)
+        try {
+            routingContext.response().end(data.listOneCustomer(searchQuery!!.toInt()))
+        } catch (e: NumberFormatException) {
+            routingContext.response().end("Invalid value for 'Id'")
         }
     }
 
+
+    private fun getQuery(params: MultiMap) {
+        val type = params.get("type")
+        params.get(type)
+    }
+
+
     private fun updateData(routingContext: RoutingContext) {
         val params = routingContext.request().params()
-        val nc = getNewParams(params)
         val oc = getParams(params)
-        if (isInCustomerList(oc.id)) {
-            val foundTeam: CustomerInfo? = customerList.find { it.id == oc.id }
-            customerList.remove(foundTeam)
-            customerList.add(nc)
-            routingContext.response().end(customerList.toString())
+        if (true) {
+            routingContext.response().end(data.updateCustomer(oc))
         } else {
             routingContext.response().setStatusCode(404).end("Data Not Found")
         }
@@ -117,27 +120,23 @@ class MainVerticle : AbstractVerticle() {
     }
 
     private fun getParams(params: MultiMap): CustomerInfo {
-        val id = assignDefaultIfNull(params.get("id"), defaultID)
-        val firstName = assignDefaultIfNull(params.get("firstName"), defaultFirstName)
-        val lastName = assignDefaultIfNull(params.get("lastName"), defaultLastName)
-        val age = assignDefaultIfNull(params.get("age"), defaultAge)
-        val email = assignDefaultIfNull(params.get("email"), defaultEmail)
 
-        return CustomerInfo()
+        val c1 = CustomerInfo()
+
+        c1.id = assignDefaultIfNull(params.get("id"), defaultID).toInt()
+        c1.firstName = assignDefaultIfNull(params.get("firstName"), defaultFirstName)
+        c1.lastName = assignDefaultIfNull(params.get("lastName"), defaultLastName)
+        c1.age = assignDefaultIfNull(params.get("age"), defaultAge).toInt()
+        c1.email = assignDefaultIfNull(params.get("email"), defaultEmail)
+
+        return c1
     }
-
-    private fun getNewParams(params: MultiMap): CustomerInfo {
-        val newId = assignDefaultIfNull(params.get("id"), defaultID)
-        val newFirstName = assignDefaultIfNull(params.get("newFirstName"), newDefaultFirstName)
-        val newLastName = assignDefaultIfNull(params.get("newLastName"), newDefaultLastName)
-        val newAge = assignDefaultIfNull(params.get("newAge"), newDefaultAge)
-        val newEmail = assignDefaultIfNull(params.get("newEmail"), newDefaultEmail)
-
-        return CustomerInfo()
-    }
-
 
     private fun assignDefaultIfNull(parameter: String?, default: String): String {
         return parameter ?: default
+    }
+
+    private fun getParam(params : MultiMap, request : String): String? {
+        return params.get(request)
     }
 }

@@ -10,6 +10,6 @@ datasource:
   db:
     username: postgres
     password: postgres
-    url: jdbc:postgresql://localhost:4200/test
+    url: jdbc:postgresql://localhost:4200/postgres
     driver: org.postgresql.Driver
 
