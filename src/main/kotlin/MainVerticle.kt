@@ -56,7 +56,7 @@ class MainVerticle : AbstractVerticle() {
 
     private fun createData(routingContext: RoutingContext) {
         val params = routingContext.request().params()
-        val d = data.createCustomer(getParams(params))
+        val d = data.create(getParams(params))
         routingContext.response().end("added $d")
     }
 
@@ -76,12 +76,9 @@ class MainVerticle : AbstractVerticle() {
 
     private fun updateData(routingContext: RoutingContext) {
         val params = routingContext.request().params()
-        val oc = getParams(params)
-        if (true) {
-            routingContext.response().end(data.updateCustomer(oc))
-        } else {
-            routingContext.response().setStatusCode(404).end("Data Not Found")
-        }
+        val v = getParams(params)
+        val oc = data.update(v)
+        routingContext.response().end("updated the row at Id: ${v.id} to $oc")
     }
 
     private fun deleteData(routingContext: RoutingContext) {

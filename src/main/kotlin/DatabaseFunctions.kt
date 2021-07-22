@@ -15,7 +15,7 @@ class DatabaseFunctions() {
     }
     private val database = DatabaseFactory.create(config)
 
-    fun createCustomer(newData: CustomerInfo): String {
+    fun create(newData: CustomerInfo): String {
         database.insert(newData)
         return newData.toString()
     }
@@ -28,14 +28,10 @@ class DatabaseFunctions() {
         return QCustomerInfo(database).where().id.eq(id).findOne().toString()
     }
 
-    fun updateCustomer(info: CustomerInfo): String {
-        var old = QCustomerInfo(database).where().id.eq(info.id).findOne()
-        old?.firstName = info.firstName
-        old?.lastName = info.lastName
-        old?.age = info.age
-        old?.email = info.email
-        var new = QCustomerInfo(database).where().id.eq(info.id).delete()
-        return new.toString()
+    fun update(newData: CustomerInfo): String {
+        QCustomerInfo(database).where().id.eq(newData.id).findOne()
+        database.insert(newData)
+        return newData.toString()
     }
 
     fun deleteOne(id: Int): String {
