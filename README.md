@@ -1,5 +1,5 @@
-Caffine infused panic
-This is my CRUD server
-Uses Postgres
-and emotional pain
-its fun tho
+Caffine infused panic \n
+This is my CRUD server \n
+Uses Postgres \n
+and emotional pain \n
+its fun tho \n
