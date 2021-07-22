@@ -16,12 +16,7 @@ class DatabaseFunctions() {
     private val database = DatabaseFactory.create(config)
 
     fun createCustomer(newData: CustomerInfo): String {
-        QCustomerInfo(database).where().id.eq(newData.id).asUpdate()
-            .set("id", newData.id)
-            .set("firstName", newData.firstName)
-            .set("lastName", newData.lastName)
-            .set("age", newData.age)
-            .set("email", newData.email)
+        database.insert(newData)
         return newData.toString()
     }
 
