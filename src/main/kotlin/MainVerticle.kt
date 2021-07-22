@@ -56,31 +56,23 @@ class MainVerticle : AbstractVerticle() {
 
     private fun createData(routingContext: RoutingContext) {
         val params = routingContext.request().params()
-        val c = getParams(params)
-        customerList.add(c)
-        routingContext.response().end("new list is:\n$customerList")
+        val d = data.createCustomer(getParams(params))
+        routingContext.response().end("added $d")
     }
 
     private fun readData(routingContext: RoutingContext) {
         val params = routingContext.request().params()
         val searchKey = getParam(params, "searchKey")
         if (searchKey == null) {
-            routingContext.response().end(data.listAllCustomers())
+            routingContext.response().end(data.listAll())
         }
         val searchQuery = getParam(params, searchKey!!)
         try {
-            routingContext.response().end(data.listOneCustomer(searchQuery!!.toInt()))
+            routingContext.response().end(data.listOne(searchQuery!!.toInt()))
         } catch (e: NumberFormatException) {
-            routingContext.response().end("Invalid value for 'Id'")
+            routingContext.response().end("Invalid value for search")
         }
     }
-
-
-    private fun getQuery(params: MultiMap) {
-        val type = params.get("type")
-        params.get(type)
-    }
-
 
     private fun updateData(routingContext: RoutingContext) {
         val params = routingContext.request().params()
@@ -94,21 +86,17 @@ class MainVerticle : AbstractVerticle() {
 
     private fun deleteData(routingContext: RoutingContext) {
         val params = routingContext.request().params()
-        val t = getParams(params)
-        if (t.id == defaultID.toInt()) {
-            customerList.clear()
-            routingContext.response().end("All data cleared")
-        } else {
-            for (team in customerList) {
-                if (team.id == t.id) {
-                    val foundCustomer: CustomerInfo? = customerList.find { it.id == t.id }
-                    customerList.remove(foundCustomer)
-                    routingContext.response().end("Deleted: $foundCustomer")
-                }
-            }
-            routingContext.response().setStatusCode(404).end("Data Not Found")
+        val searchKey = getParam(params, "searchKey")
+        if (searchKey == null) {
+            routingContext.response().end("searchKey not specified, please try again")
         }
-
+        val searchQuery = getParam(params, searchKey!!)
+        try {
+            routingContext.response().end(data.deleteOne(searchQuery!!.toInt()))
+        } catch (e: NumberFormatException) {
+            routingContext.response().end("Invalid value for 'Id'")
+        }
+        routingContext.response().end(data.deleteAll())
     }
 
     private fun isInCustomerList(requestedCustomerID: Int): Boolean {
