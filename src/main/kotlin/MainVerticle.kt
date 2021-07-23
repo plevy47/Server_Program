@@ -7,16 +7,9 @@ import java.lang.NumberFormatException
 
 class MainVerticle : AbstractVerticle() {
 
-    private val defaultID = "0"
-    private val defaultFirstName = "none"
-    private val defaultLastName = "none"
-    private val defaultAge = "0"
-    private val defaultEmail = "none"
-    private val newDefaultFirstName = "none"
-    private val newDefaultLastName = "none"
-    private val newDefaultAge = "0"
-    private val newDefaultEmail = "none"
-    val data = DatabaseFunctions()
+    private val default = "none"
+    private val defaultInt = "0"
+    private val data = DatabaseFunctions()
 
     enum class AllPaths(val path: String) {
         Create("/create"),
@@ -24,8 +17,6 @@ class MainVerticle : AbstractVerticle() {
         Update("/update"),
         Delete("/delete")
     }
-
-    var customerList = mutableListOf<CustomerInfo>()
 
     private val defaultMessage =
         "Endpoint not found. Try again from our list of endpoints. " +
@@ -47,7 +38,12 @@ class MainVerticle : AbstractVerticle() {
         router.get(AllPaths.Read.path).handler { readData(it) }
         router.put(AllPaths.Update.path).handler { updateData(it) }
         router.delete(AllPaths.Delete.path).handler { deleteData(it) }
+        router.route("/test").handler{runTest(it) }
         router.route().handler { displayDefault(it) }
+    }
+
+    private fun runTest(routingContext: RoutingContext){
+        routingContext.response().end(data.test())
     }
 
     private fun displayDefault(routingContext: RoutingContext) {
@@ -96,24 +92,13 @@ class MainVerticle : AbstractVerticle() {
         routingContext.response().end(data.deleteAll())
     }
 
-    private fun isInCustomerList(requestedCustomerID: Int): Boolean {
-        for (customer in customerList)
-            if (customer.id == requestedCustomerID) {
-                return true
-            }
-        return false
-    }
-
     private fun getParams(params: MultiMap): CustomerInfo {
-
         val c1 = CustomerInfo()
-
-        c1.id = assignDefaultIfNull(params.get("id"), defaultID).toInt()
-        c1.firstName = assignDefaultIfNull(params.get("firstName"), defaultFirstName)
-        c1.lastName = assignDefaultIfNull(params.get("lastName"), defaultLastName)
-        c1.age = assignDefaultIfNull(params.get("age"), defaultAge).toInt()
-        c1.email = assignDefaultIfNull(params.get("email"), defaultEmail)
-
+        c1.id = assignDefaultIfNull(params.get("id"), defaultInt).toInt()
+        c1.firstName = assignDefaultIfNull(params.get("firstName"), default)
+        c1.lastName = assignDefaultIfNull(params.get("lastName"), default)
+        c1.age = assignDefaultIfNull(params.get("age"), defaultInt).toInt()
+        c1.email = assignDefaultIfNull(params.get("email"), default)
         return c1
     }
 

@@ -6,7 +6,7 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "customer_info",schema = "public",catalog = "")
-class CustomerInfo() : Model() {
+class CustomerInfo : Model() {
 
     @Id
     @Column(name = "id")

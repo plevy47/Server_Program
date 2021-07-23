@@ -4,7 +4,7 @@ import io.ebean.DatabaseFactory
 import io.ebean.config.DatabaseConfig
 import io.ebean.datasource.DataSourceConfig
 
-class DatabaseFunctions() {
+class DatabaseFunctions {
     private val ebeanDataSourceConfig = DataSourceConfig().apply {
         username = "postgres"
         password = "postgres"
@@ -14,6 +14,11 @@ class DatabaseFunctions() {
         dataSourceConfig = ebeanDataSourceConfig
     }
     private val database = DatabaseFactory.create(config)
+
+    fun test() :String {
+        return "Testing..."
+    }
+
 
     fun create(newData: CustomerInfo): String {
         database.insert(newData)
