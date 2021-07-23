@@ -36,7 +36,7 @@ class DatabaseFunctions {
 
     fun update(newData: CustomerInfo): String {
         QCustomerInfo(database).where().id.eq(newData.id).findOne()
-        database.insert(newData)
+        database.update(newData)
         return newData.toString()
     }
 
