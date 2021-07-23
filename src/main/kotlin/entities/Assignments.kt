@@ -8,8 +8,8 @@ import javax.persistence.Table
 
 
 @Entity
-@Table
-class Orders() : Model() {
+@Table(name = "assignment",schema = "public",catalog = "")
+class Assignment : Model() {
 
     @Length(30)
     var productId: Int = 0

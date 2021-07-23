@@ -1,3 +1,4 @@
+import entities.Classes
 import io.vertx.core.AbstractVerticle
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.RoutingContext
@@ -43,7 +44,13 @@ class MainVerticle : AbstractVerticle() {
     }
 
     private fun runTest(routingContext: RoutingContext){
-        routingContext.response().end(data.test())
+        val newClass = Classes()
+        newClass.className = "Communications"
+        newClass.classCode = "COMM-3020"
+        newClass.teacherName = "Dr. Jeffery Weingarten"
+        newClass.teacherEmail = "jweingarten@fanshaweonline.ca2"
+        newClass.semester = "W21"
+        routingContext.response().end(data.create(newClass))
     }
 
     private fun displayDefault(routingContext: RoutingContext) {
@@ -94,6 +101,9 @@ class MainVerticle : AbstractVerticle() {
 
     private fun getParams(params: MultiMap): CustomerInfo {
         val c1 = CustomerInfo()
+        for (param in params){
+            println(param.toString())
+        }
         c1.id = assignDefaultIfNull(params.get("id"), defaultInt).toInt()
         c1.firstName = assignDefaultIfNull(params.get("firstName"), default)
         c1.lastName = assignDefaultIfNull(params.get("lastName"), default)

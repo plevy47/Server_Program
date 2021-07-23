@@ -1,5 +1,6 @@
+import entities.Classes
 import entities.CustomerInfo
-import entities.query.QCustomerInfo
+import entities.query.*
 import io.ebean.DatabaseFactory
 import io.ebean.config.DatabaseConfig
 import io.ebean.datasource.DataSourceConfig
@@ -14,13 +15,13 @@ class DatabaseFunctions {
         dataSourceConfig = ebeanDataSourceConfig
     }
     private val database = DatabaseFactory.create(config)
+    //private val database1 = DatabaseFactory.create()
 
     fun test() :String {
         return "Testing..."
     }
 
-
-    fun create(newData: CustomerInfo): String {
+    fun create(newData: Any): String {
         database.insert(newData)
         return newData.toString()
     }
