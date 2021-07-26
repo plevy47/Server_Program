@@ -1,4 +1,3 @@
-import entities.Classes
 import entities.CustomerInfo
 import entities.query.*
 import io.ebean.DatabaseFactory
@@ -21,21 +20,23 @@ class DatabaseFunctions {
         return "Testing..."
     }
 
-    fun create(newData: Any): String {
+    fun create(newData: Any?): String {
         database.insert(newData)
         return newData.toString()
     }
 
     fun listAll(): String {
+        if(true){
         return QCustomerInfo(database).where().findList().toString()
+        }
+        return QClasses (database).where().findList().toString()
     }
 
     fun listOne(id: Int): String {
         return QCustomerInfo(database).where().id.eq(id).findOne().toString()
     }
 
-    fun update(newData: CustomerInfo): String {
-        QCustomerInfo(database).where().id.eq(newData.id).findOne()
+    fun update(newData: Any?): String {
         database.update(newData)
         return newData.toString()
     }

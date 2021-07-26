@@ -1,3 +1,4 @@
+import entities.Assignments
 import entities.Classes
 import io.vertx.core.AbstractVerticle
 import io.vertx.ext.web.Router
@@ -8,8 +9,7 @@ import java.lang.NumberFormatException
 
 class MainVerticle : AbstractVerticle() {
 
-    private val default = "none"
-    private val defaultInt = "0"
+    private val default = "0"
     private val data = DatabaseFunctions()
 
     enum class AllPaths(val path: String) {
@@ -81,7 +81,7 @@ class MainVerticle : AbstractVerticle() {
         val params = routingContext.request().params()
         val v = getParams(params)
         val oc = data.update(v)
-        routingContext.response().end("updated the row at Id: ${v.id} to $oc")
+        routingContext.response().end("updated the row at Id: ? to $oc")
     }
 
     private fun deleteData(routingContext: RoutingContext) {
@@ -99,17 +99,33 @@ class MainVerticle : AbstractVerticle() {
         routingContext.response().end(data.deleteAll())
     }
 
-    private fun getParams(params: MultiMap): CustomerInfo {
-        val c1 = CustomerInfo()
-        for (param in params){
-            println(param.toString())
+    private fun getParams(params: MultiMap): Any? {
+
+        val c1 = Classes()
+        val a1 = Assignments()
+
+        when (params.get("table")){
+            "classes" -> {
+                c1.id = assignDefaultIfNull(params.get("id"), default).toInt()
+                c1.className = assignDefaultIfNull(params.get("className"), default)
+                c1.classCode = assignDefaultIfNull(params.get("classCode"), default)
+                c1.teacherName = assignDefaultIfNull(params.get("teacherName"), default)
+                c1.teacherEmail = assignDefaultIfNull(params.get("teacherEmail"), default)
+                c1.semester = assignDefaultIfNull(params.get("semester"), default)
+                return c1
+            }
+            "assignments" -> {
+                a1.id = assignDefaultIfNull(params.get("id"), default).toInt()
+                a1.assignmentDescription = assignDefaultIfNull(params.get("assignmentDescription"), default)
+                a1.assignmentType = assignDefaultIfNull(params.get("assignmentType"), default)
+                a1.dueDate = assignDefaultIfNull(params.get("dueDate"), default)
+                a1.gradeValue = assignDefaultIfNull(params.get("gradeValue"), default)
+                a1.gradeResult = assignDefaultIfNull(params.get("gradeResult"), default)
+                return a1
+            }
+            else -> print(params.get("Table Not Found"))
         }
-        c1.id = assignDefaultIfNull(params.get("id"), defaultInt).toInt()
-        c1.firstName = assignDefaultIfNull(params.get("firstName"), default)
-        c1.lastName = assignDefaultIfNull(params.get("lastName"), default)
-        c1.age = assignDefaultIfNull(params.get("age"), defaultInt).toInt()
-        c1.email = assignDefaultIfNull(params.get("email"), default)
-        return c1
+        return null
     }
 
     private fun assignDefaultIfNull(parameter: String?, default: String): String {

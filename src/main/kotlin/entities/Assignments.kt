@@ -2,29 +2,43 @@ package entities
 
 import io.ebean.Model
 import io.ebean.annotation.Length
-import java.util.*
-import javax.persistence.Entity
-import javax.persistence.Table
+import javax.persistence.*
 
 
 @Entity
 @Table(name = "assignment",schema = "public",catalog = "")
-class Assignment : Model() {
+class Assignments : Model() {
 
-    @Length(30)
-    var productId: Int = 0
+    @Id
+    @Column(name = "assignment_id")
+    var id : Int = 0
 
-    @Length(30)
-    var productName: String = "default"
+    @Basic
+    @Column(name = "assignment_description")
+    @Length(40)
+    var assignmentDescription: String = "default"
 
-    @Length(2)
-    var orderDate: Date? = null
+    @Basic
+    @Column(name = "assignment_type")
+    @Length(20)
+    var assignmentType: String = "default"
 
-    @Length(50)
-    var orderPrice: Long = 0
+    @Basic
+    @Column(name = "due_date")
+    @Length(10)
+    var dueDate: String = "default"
+
+    @Basic
+    @Column(name = "grade_value")
+    @Length(3)
+    var gradeValue: String = "default"
+
+    @Basic
+    @Column(name = "grade_result")
+    @Length(3)
+    var gradeResult: String = "default"
 
     override fun toString(): String{
-        return "Id: $productId\nFirst Product: $productName\nDate of Order: $orderDate\nOrder Price: $orderPrice\n\n"
+        return "\nId: $id\n Description: $assignmentDescription\nType: $assignmentType\nDue Date: $dueDate\nGrade Value: $gradeValue\nGrade Result: $gradeResult\n\n"
     }
-
 }

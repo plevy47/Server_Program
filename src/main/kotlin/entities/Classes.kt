@@ -37,7 +37,7 @@ class Classes : Model(){
     @Length(3)
     var semester: String = "default"
 
-//    override fun toString(): String{
-//        return "classestostring"
-//    }
+    override fun toString(): String{
+        return "\nId: $id\nClass Name: $className\nClass Code: $classCode\nTeacher Name: $teacherName\nTeacher Email: $teacherEmail\nSemester: $semester\n\n"
+    }
 }
