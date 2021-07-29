@@ -1,4 +1,5 @@
-import entities.CustomerInfo
+package database
+
 import entities.query.*
 import io.ebean.DatabaseFactory
 import io.ebean.config.DatabaseConfig

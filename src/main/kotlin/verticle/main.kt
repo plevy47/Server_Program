@@ -1,3 +1,4 @@
+import verticle.MainVerticle
 import io.vertx.core.Vertx
 
 fun main() {

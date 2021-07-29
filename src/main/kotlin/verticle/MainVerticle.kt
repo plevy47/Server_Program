@@ -1,9 +1,11 @@
+package verticle
+
+import database.DatabaseFunctions
 import entities.Assignments
 import entities.Classes
 import io.vertx.core.AbstractVerticle
 import io.vertx.ext.web.Router
 import io.vertx.ext.web.RoutingContext
-import entities.CustomerInfo
 import io.vertx.core.MultiMap
 import java.lang.NumberFormatException
 
