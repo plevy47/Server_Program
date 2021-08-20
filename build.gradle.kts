@@ -40,7 +40,7 @@ liquibase {
         arguments = mapOf(
             "logLevel" to "debug",
             "changeLogFile" to dbChangeLog,
-            "url" to "jdbc:postgresql://localhost:4200/postgres",
+            "url" to "jdbc:postgresql://localhost:5432/tunafish_db",
             "username" to "postgres",
             "password" to "postgres",
             "driver" to "org.postgresql.Driver"
